@@ -3,27 +3,54 @@
   "tree": {
     "$className": "DataModel",
 
-    "ReplicatedStorage": {
-      "Shared": {
-        "$path": "src/shared"
+    "ReplicatedStorage": { // This represents the ReplicatedStorage SERVICE in Studio
+      "$className": "ReplicatedStorage",
+      "Shared": { // This will create a 'Shared' FOLDER instance INSIDE ReplicatedStorage in Studio
+        "$className": "Folder",
+        "TycoonConfig": { // This maps your local TycoonConfig.luau file to a ModuleScript inside ReplicatedStorage.Shared
+          "$path": "src/shared/TycoonConfig.luau"
+        }
+      },
+      "RemoteEvents": { // This will create a 'RemoteEvents' FOLDER instance INSIDE ReplicatedStorage in Studio
+        "$className": "Folder",
+        "ShowTycoonSelection": { // This creates the RemoteEvent instance
+          "$className": "RemoteEvent"
+        },
+        "TycoonTypeSelected": { // This creates the RemoteEvent instance
+          "$className": "RemoteEvent"
+        }
       }
     },
 
-    "ServerScriptService": {
-      "Server": {
+    "ServerScriptService": { // This represents the ServerScriptService SERVICE in Studio
+      "$className": "ServerScriptService",
+      "Server": { // This maps the entire 'src/server' folder to a 'Server' Folder in ServerScriptService in Studio
         "$path": "src/server"
       }
+      // Assuming init.server.luau and Hello.luau are inside src/server, they will sync via this path.
+      // If TycoonManager.luau is placed in src/server, it will also sync via this path.
     },
 
-    "StarterPlayer": {
-      "StarterPlayerScripts": {
-        "Client": {
+    "StarterPlayer": { // This represents the StarterPlayer SERVICE in Studio
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts": { // This represents the StarterPlayerScripts FOLDER in Studio
+        "$className": "StarterPlayerScripts",
+        "Client": { // This maps the entire 'src/client' folder to a 'Client' Folder in StarterPlayerScripts in Studio
           "$path": "src/client"
         }
       }
     },
 
-    "Workspace": {
+    "ServerStorage": { // This represents the ServerStorage SERVICE in Studio
+      "$className": "ServerStorage",
+      "TycoonTemplates": { // This will create a 'TycoonTemplates' FOLDER instance INSIDE ServerStorage in Studio
+        "$className": "Folder"
+        // We don't use "$path" here because the actual models (MinerTycoonTemplate etc.) are not local files synced by Rojo.
+        // They are instances you'll manually create/place in Studio within this folder.
+      }
+    },
+
+    "Workspace": { // Including your existing Workspace properties
       "$properties": {
         "FilteringEnabled": true
       },
@@ -50,7 +77,7 @@
         }
       }
     },
-    "Lighting": {
+    "Lighting": { // Including your existing Lighting properties
       "$properties": {
         "Ambient": [
           0,
@@ -63,7 +90,7 @@
         "Technology": "Voxel"
       }
     },
-    "SoundService": {
+    "SoundService": { // Including your existing SoundService properties
       "$properties": {
         "RespectFilteringEnabled": true
       }
