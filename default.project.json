@@ -8,6 +8,9 @@
         "$className": "Folder",
         "TycoonConfig": {
           "$path": "src/shared/TycoonConfig.luau"
+        },
+        "Constants": {
+          "$path": "src/shared/Constants.luau"
         }
       },
       "RemoteEvents": {
