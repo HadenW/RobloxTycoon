@@ -20,6 +20,9 @@
         },
         "TycoonTypeSelected": {
           "$className": "RemoteEvent"
+        },
+        "MineResourceEvent": {
+          "$className": "RemoteEvent"
         }
       }
     },
@@ -36,6 +39,12 @@
         "Client": {
           "$path": "src/client"
         }
+      }
+    },
+    "StarterPack": {
+      "$className": "StarterPack",
+      "AxeTool": {
+        "$path": "src/client/Tools/AxeTool"
       }
     },
     "ServerStorage": {

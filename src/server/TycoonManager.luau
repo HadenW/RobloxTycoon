@@ -5,19 +5,16 @@ local TycoonManager = {}
 
 local ServerStorage = game:GetService("ServerStorage")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace") -- Need Workspace to place the cloned tycoon
 
 local TycoonTemplatesFolder = ServerStorage:WaitForChild("TycoonTemplates")
 local RemoteEvents = ReplicatedStorage:WaitForChild("RemoteEvents")
 
--- Define the RemoteEvents we'll be using
 local ShowTycoonSelection = RemoteEvents:WaitForChild("ShowTycoonSelection")
 local TycoonTypeSelected = RemoteEvents:WaitForChild("TycoonTypeSelected")
 
--- A table to keep track of claimed tycoons, mapping player to tycoon instance
 local claimedTycoons: { [Player]: Model } = {}
-
--- Corrected line 20: A table to keep track of claimed tycoon IDs, mapping tycoon part to player
-local occupiedTycoonClaimers: { [Part]: Player } = {} -- Changed [TycoonClaimerPart: Part] to [Part]
+local occupiedTycoonClaimers: { [Part]: Player } = {}
 
 function TycoonManager:AssignTycoon(player: Player, tycoonType: string, tycoonClaimerPart: Part)
     print(`Player {player.Name} is trying to claim a {tycoonType} tycoon from {tycoonClaimerPart.Name}`)
@@ -32,14 +29,36 @@ function TycoonManager:AssignTycoon(player: Player, tycoonType: string, tycoonCl
         return
     end
 
-    -- For now, just print a message. We'll add the actual tycoon instantiation later.
-    print(`[TycoonManager] Successfully initiated claiming process for {player.Name} for a {tycoonType} tycoon!`)
+    -- Attempt to find the correct tycoon template
+    local tycoonTemplate = TycoonTemplatesFolder:FindFirstChild(tycoonType .. "TycoonTemplate") -- e.g., "MinerTycoonTemplate"
+
+    if not tycoonTemplate or not tycoonTemplate:IsA("Model") then
+        warn(`[TycoonManager] Could not find template for tycoonType: {tycoonType}`)
+        return
+    end
+
+    -- Clone the tycoon template
+    local newTycoon = tycoonTemplate:Clone()
+    newTycoon.Name = player.Name .. "'s " .. tycoonType .. " Tycoon" -- Name it for clarity
+
+    -- Position the new tycoon at the TycoonClaimerPart's location (adjust as needed)
+    -- You might want to offset this or use a specific spawn point within your template
+    newTycoon:SetPrimaryPartCFrame(tycoonClaimerPart.CFrame)
+
+    -- Parent the new tycoon to the Workspace
+    newTycoon.Parent = Workspace
 
     -- Mark the claimer as occupied
     occupiedTycoonClaimers[tycoonClaimerPart] = player
-    claimedTycoons[player] = nil -- Placeholder for the actual tycoon model once instantiated
+    claimedTycoons[player] = newTycoon -- Store the actual tycoon model
 
-    -- TODO: Add logic to clone the tycoon template, place it, and set up ownership
+    -- Hide the original TycoonClaimerPart as it's now claimed
+    tycoonClaimerPart.Transparency = 1
+    tycoonClaimerPart.CanCollide = false
+    tycoonClaimerPart.Anchored = true -- Keep it from falling/moving if it was a part
+
+    print(`[TycoonManager] Successfully instantiated {tycoonType} tycoon for {player.Name}!`)
+    -- TODO: Add more setup logic here, like setting up Droppers, plot ownership, etc.
 end
 
 -- Connect the TycoonTypeSelected RemoteEvent
