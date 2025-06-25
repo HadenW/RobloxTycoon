@@ -3,15 +3,12 @@
 
 local Constants = require(game:GetService("ReplicatedStorage").Shared.TycoonConfig.Parent:WaitForChild("Constants")) 
 
-if Constants.DEBUG_MODE then print("init.server.luau script started.") end
-
+if Constants.DEBUG_MODE then print("ServerMain.server.luau script started.") end
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local ServerFolder = game:GetService("ServerScriptService"):WaitForChild("Server") 
-
-local TycoonManager = require(ServerFolder:WaitForChild("TycoonManager")) 
+local TycoonManager = require(game:GetService("ServerScriptService"):WaitForChild("TycoonManager"))
 
 local RemoteEvents = ReplicatedStorage:WaitForChild("RemoteEvents") 
 local ShowTycoonSelection = RemoteEvents:WaitForChild("ShowTycoonSelection") 
@@ -35,4 +32,4 @@ else
     end)
 end
 
-if Constants.DEBUG_MODE then print("init.server.luau script finished setup.") end
+if Constants.DEBUG_MODE then print("ServerMain.server.luau script finished setup.") end
