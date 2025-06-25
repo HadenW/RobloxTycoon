@@ -44,7 +44,12 @@
     "StarterPack": {
       "$className": "StarterPack",
       "AxeTool": {
-        "$path": "src/client/Tools/AxeTool"
+        "$path": "src/client/Tools/AxeTool",
+        "$ignoreUnknownInstances": true,
+        "AxeSwingAnimation": {
+          "$className": "Animation",
+          "$path": "src/client/Tools/AxeTool/AxeSwingAnimation.rbxmv"
+        }
       }
     },
     "ServerStorage": {

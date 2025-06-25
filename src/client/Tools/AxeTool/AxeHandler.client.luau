@@ -1,26 +1,43 @@
---!strict  -- Add this line for better type checking if not already present
+--!nocheck
 print("DEBUG: AxeHandler script file was loaded!")
 
-local tool = script.Parent
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+-- Search for the tool in character or backpack
+local tool = character:FindFirstChild("AxeTool") or player.Backpack:FindFirstChild("AxeTool")
+if not tool then
+	warn("❌ AxeTool not found in character or backpack!")
+	return
+end
+
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
+local animator = humanoid:FindFirstChildOfClass("Animator") or Instance.new("Animator", humanoid)
 
--- local animation = humanoid:LoadAnimation(tool.AxeSwingAnimation) -- KEEP THIS COMMENTED OUT FOR NOW
+local animTrack = animator:LoadAnimation(tool:WaitForChild("AxeSwingAnimation"))
+
+local MAX_HIT_DISTANCE = 10
 
 tool.Equipped:Connect(function()
-    print("[Client] Axe equipped!")
-    -- animation:Play() -- KEEP THIS COMMENTED OUT FOR NOW
+	print("[Client] Axe equipped!")
+	animTrack:Play()
 end)
 
 tool.Activated:Connect(function()
-    print("[Client] Axe swung!")
-    -- Simulate hitting an OreNode
-    -- This is a placeholder; real hit detection would involve raycasting or magnitude checks
-    local oreNode = workspace:FindFirstChild("OreNode") -- Assuming you have an OreNode in Workspace
-    if oreNode then
-        print("[Client] Hit OreNode!")
-        -- You would likely fire a RemoteEvent to the server here
-        game.ReplicatedStorage.RemoteEvents.MineResourceEvent:FireServer("Wood", oreNode)
-    end
+	print("[Client] Axe swung!")
+
+	local oreNode = workspace:FindFirstChild("OreNode")
+	if oreNode then
+		local distance = (tool.Handle.Position - oreNode.Position).Magnitude
+		if distance <= MAX_HIT_DISTANCE then
+			print("[Client] Hit OreNode!")
+			game.ReplicatedStorage.RemoteEvents.MineResourceEvent:FireServer("Wood", oreNode)
+		else
+			print("[Client] Swung, but no OreNode in range!")
+		end
+	else
+		print("[Client] Swung, but no OreNode found in Workspace!")
+	end
 end)
