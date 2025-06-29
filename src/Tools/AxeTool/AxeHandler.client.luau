@@ -15,8 +15,7 @@ local humanoid = character:WaitForChild("Humanoid")
 local animator = humanoid:FindFirstChildOfClass("Animator") or Instance.new("Animator", humanoid)
 
 local animTrack = animator:LoadAnimation(tool:WaitForChild("AxeSwingAnimation"))
--- Set animation priority for better control
-animTrack.Priority = Enum.AnimationPriority.Action
+animTrack.Priority = Enum.AnimationPriority.Action -- Ensure animation priority is set
 
 local MAX_HIT_DISTANCE = 10
 
@@ -35,13 +34,17 @@ tool.Activated:Connect(function()
         local oreNodePosition = nil
         if oreNode.PrimaryPart then
             oreNodePosition = oreNode.PrimaryPart.Position
+        else
+            warn("OreNode does not have a PrimaryPart set! Using its pivot point as a fallback.")
+            oreNodePosition = oreNode:GetPivot().Position
         end
 
         if oreNodePosition then
             local distance = (tool.Handle.Position - oreNodePosition).Magnitude
             if distance <= MAX_HIT_DISTANCE then
                 print("[Client] Hit OreNode!")
-                game.ReplicatedStorage.RemoteEvents.MineResourceEvent:FireServer("Wood", oreNode)
+                -- Pass the actual name of the tool (e.g., "AxeTool")
+                game.ReplicatedStorage.RemoteEvents.MineResourceEvent:FireServer(tool.Name, oreNode)
             else
                 print("[Client] Swung, but no OreNode in range!")
             end
