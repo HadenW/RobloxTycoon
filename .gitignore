@@ -12,3 +12,6 @@ profile.svg
 
 # Time trace
 trace.json
+
+# Cursor logs (do not commit)
+.cursor/*.log
