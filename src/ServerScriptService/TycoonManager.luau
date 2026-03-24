@@ -16,6 +16,23 @@ local TycoonTypeSelected = RemoteEvents:WaitForChild("TycoonTypeSelected")
 local claimedTycoons: { [Player]: Model } = {}
 local occupiedTycoonClaimers: { [Part]: Player } = {}
 
+local function resolveTycoonTemplate(tycoonType: string): Model?
+    local expectedTemplateName = tycoonType .. "TycoonTemplate"
+    local firstMatch = TycoonTemplatesFolder:FindFirstChild(expectedTemplateName)
+    if firstMatch and firstMatch:IsA("Model") then
+        return firstMatch
+    end
+
+    -- If a Folder with the same name exists, prefer any Model sibling with the expected name.
+    for _, child in ipairs(TycoonTemplatesFolder:GetChildren()) do
+        if child.Name == expectedTemplateName and child:IsA("Model") then
+            return child
+        end
+    end
+
+    return nil
+end
+
 function TycoonManager:AssignTycoon(player: Player, tycoonType: string, tycoonClaimerPart: Part)
     print(`Player {player.Name} is trying to claim a {tycoonType} tycoon from {tycoonClaimerPart.Name}`)
 
@@ -30,7 +47,7 @@ function TycoonManager:AssignTycoon(player: Player, tycoonType: string, tycoonCl
     end
 
     -- Attempt to find the correct tycoon template
-    local tycoonTemplate = TycoonTemplatesFolder:FindFirstChild(tycoonType .. "TycoonTemplate") -- e.g., "MinerTycoonTemplate"
+    local tycoonTemplate = resolveTycoonTemplate(tycoonType)
 
     if not tycoonTemplate or not tycoonTemplate:IsA("Model") then
         warn(`[TycoonManager] Could not find template for tycoonType: {tycoonType}`)
